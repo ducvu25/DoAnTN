@@ -6242,7 +6242,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &6985001639561853905
 Transform:
   m_ObjectHideFlags: 0
@@ -6272,7 +6272,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 850db2e4ddceef34c8be41e3d6a7ee3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _name: Start
+  _name: LaCo
   _der: "C\u1EDD Vi\u1EC7t Nam"
   _sprite: {fileID: 21300000, guid: 28189cc146bad7f47aacd763999d979c, type: 3}
   items:
@@ -8777,7 +8777,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2246393797300071535
 Transform:
   m_ObjectHideFlags: 0

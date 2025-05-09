@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using UnityEditor.SearchService;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class UI_Controller : MonoBehaviour
@@ -10,7 +12,7 @@ public class UI_Controller : MonoBehaviour
 
     [SerializeField] Button btnPause;
     [SerializeField] Button btnInforFollow;
-    [SerializeField] Button btnFollow;
+    [SerializeField] Button btnExit;
 
     [SerializeField] GameObject goPanelShowInfor;
     [SerializeField] Transform transContentFollow;
@@ -19,26 +21,22 @@ public class UI_Controller : MonoBehaviour
 
     bool isShowFollow = false;
 
-    [SerializeField] GameObject goPanelFollow;
-    [SerializeField] UI_FollowController followController;
-
     [SerializeField] TextMeshProUGUI txtShowTime;
     int timeShow = 0;
 
     // Start is called before the first frame update
     void Start()
     {
+        btnExit.onClick.AddListener(() =>
+        {
+            SceneManager.LoadScene(ValueConst.NAME_SCENE_LOADING);
+        });
         btnPause.onClick.AddListener(() =>
         {
             Time.timeScale = Time.timeScale == 0 ? 1 : 0;
         });
         
         btnInforFollow.onClick.AddListener(OnShowInfor);
-        btnFollow.onClick.AddListener(() =>
-        {
-            SetUpUI(2);
-            followController.SetUp(TYPE_CAMERA.DRONE);
-        });
 
         SetUpUI(0);
 
@@ -46,10 +44,8 @@ public class UI_Controller : MonoBehaviour
     }
     public void SetUpUI(int type)
     {
-        DroneManager.instance.cameraController.enabled = type > 1;
         goPanelMain.SetActive(type <= 1);
         goPanelShowInfor .SetActive(type == 1);
-        goPanelFollow.SetActive(type == 2);
     }
     // Update is called once per frame
     void Update()

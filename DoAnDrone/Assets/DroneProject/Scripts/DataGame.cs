@@ -6,7 +6,7 @@ using System.Text;
 using UnityEngine;
 
 public static class DataGame
-{ 
+{
     public static List<List<Data>> datas = new List<List<Data>>();
 
     public static void SaveData(List<TypeShape> shapeList)

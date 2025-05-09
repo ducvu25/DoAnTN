@@ -67,7 +67,6 @@ public class InitSin : MonoBehaviour
             targets[i].position = positions[i][0] + yOffset;
             positions[i].Add(targets[i].position - pos);
         }
-        Debug.Log(positions[0].Count);
         if (Input.GetKeyDown(KeyCode.Space))
         {
             Export();

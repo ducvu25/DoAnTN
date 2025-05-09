@@ -13,19 +13,29 @@ public class MenuManager : MonoBehaviour
     [SerializeField] GameObject goItem;
 
     [SerializeField] Button btnStart;
+    [SerializeField] Button btnQuit;
 
     // Start is called before the first frame update
     void Start()
     {
         InitData();
+        btnQuit.onClick.AddListener(() =>
+        {
+            Application.Quit();
+        });
 
         btnStart.onClick.AddListener(() =>
         {
             List<TypeShape> shapeList = new List<TypeShape>();
             for (int i=0; i < contentShow.childCount; i++)
-                shapeList.Add(contentShow.GetChild(i).GetComponent<ItemShowMainHome>().typeShape);
+            {
+                TypeShape t = contentShow.GetChild(i).GetComponent<ItemShowMainHome>().typeShape;
+                Debug.Log(t._name);
+                shapeList.Add(t);
+            }
             DataGame.SaveData(shapeList);
-            SceneManager.LoadScene(1);
+            //return;
+            SceneManager.LoadScene(ValueConst.NAME_SCENE_PLAY);
         });
     }
 

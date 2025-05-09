@@ -25,7 +25,6 @@ public class DroneManager : MonoBehaviour
     public static DroneManager instance;
     List<List<Data>> datas = new List<List<Data>>();
 
-    public CameraController cameraController;
     public UI_Controller uiController;
     List<int> checkState = new List<int>();
     bool isEnd = false;
@@ -33,7 +32,6 @@ public class DroneManager : MonoBehaviour
     {
         indexTask = -1;
         instance = this;
-        cameraController = GetComponent<CameraController>();
     }
     public int indexFrame = 0;
     // Start is called before the first frame update
@@ -48,15 +46,7 @@ public class DroneManager : MonoBehaviour
             datas.Insert(datas.Count - 1, DataGame.datas[i]);
         //return;   
 
-        int n = transform.childCount;
-        for (int i = 0; i < n; i++) {
-            drones.Add(transform.GetChild(i));
-            droneList.Add(transform.GetChild(i).GetComponent<Drone>());
-            droneList[i].SetValue(i);
-        }
-        cameraController.SetUpCamera(TYPE_CAMERA.DEFAULT, null);
-        StartCoroutine(SetUpHungarian(0));
-        StartCoroutine(CheckProfiler(0.5f));
+        StartCoroutine(SetUp(6));
     }
     public Vector3 DirSupervisoryDrone(int i)
     {
@@ -124,6 +114,19 @@ public class DroneManager : MonoBehaviour
                 indexFrame++;
             }
         }
+    }
+    IEnumerator SetUp(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        int n = transform.childCount;
+        for (int i = 0; i < n; i++)
+        {
+            drones.Add(transform.GetChild(i));
+            droneList.Add(transform.GetChild(i).GetComponent<Drone>());
+            droneList[i].SetValue(i);
+        }
+        StartCoroutine(SetUpHungarian(0));
+        StartCoroutine(CheckProfiler(0.5f));
     }
     IEnumerator SetUpHungarian(float delay)
     {

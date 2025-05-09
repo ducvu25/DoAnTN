@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class TypeShape : MonoBehaviour
 {
+    [SerializeField] bool isTool = false;
     public string _name;
     public string _der;
     public Sprite _sprite;
@@ -25,6 +27,11 @@ public class TypeShape : MonoBehaviour
             color = c;
             isRandom = i;
         }
+    }
+    private void Start()
+    {
+        if (isTool)
+            ExportFile();
     }
     public void ExportFile()
     {

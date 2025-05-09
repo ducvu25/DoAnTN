@@ -11950,6 +11950,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _name: VU TRUNG DUC
+  _der: 
+  _sprite: {fileID: 0}
   items:
   - name: VU TRUNG DUC
     transIndex:

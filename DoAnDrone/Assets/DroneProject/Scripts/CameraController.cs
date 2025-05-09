@@ -14,26 +14,11 @@ public class CameraController : MonoBehaviour
     public float maxZoom = 100f; // Zoom tối đa
 
     private Camera cam;
-
-    [SerializeField] Camera[] cameras;
     void Start()
     {
         cam = Camera.main;
     }
 
-    public void SetUpCamera(TYPE_CAMERA typeCam, Transform trans)
-    {
-        for(int i = 0; i < cameras.Length; i++)
-            cameras[i].gameObject.SetActive(false);
-        cam = cameras[(int)typeCam];
-        cam.gameObject.SetActive(true);
-        if (typeCam == TYPE_CAMERA.DRONE)
-        {
-            cam.transform.parent = trans;
-            cam.transform.localPosition = Vector2.zero;
-        }
-        cam.transform.rotation = Quaternion.identity;
-    }
     void Update()
     {
         // Xử lý phóng to/thu nhỏ

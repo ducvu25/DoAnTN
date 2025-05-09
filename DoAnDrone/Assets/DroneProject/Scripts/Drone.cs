@@ -48,7 +48,10 @@ public class Drone : MonoBehaviour
     {
         inforDrone = new InforDrone(-1);
         rb = GetComponent<Rigidbody>();
+        rb.useGravity = false;
+
         light = GetComponentInChildren<Light>();
+        light.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -92,7 +95,9 @@ public class Drone : MonoBehaviour
     }
     public void SetValue(int id)
     {
-        inforDrone = new InforDrone(id);
+        rb.useGravity = true;
+        inforDrone = new InforDrone(id); 
+        light.gameObject.SetActive(true);
     }
     public void SetTask(Data data)
     {
