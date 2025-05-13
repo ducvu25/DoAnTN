@@ -14,10 +14,13 @@ public class MenuManager : MonoBehaviour
 
     [SerializeField] Button btnStart;
     [SerializeField] Button btnQuit;
+    [SerializeField] Button btnUseLocal;
 
     // Start is called before the first frame update
     void Start()
     {
+        
+        btnUseLocal.image.color = PlayerPrefs.GetInt("useLocalOptimal", 0) == 0 ? Color.green : Color.red;
         InitData();
         btnQuit.onClick.AddListener(() =>
         {
@@ -30,12 +33,21 @@ public class MenuManager : MonoBehaviour
             for (int i=0; i < contentShow.childCount; i++)
             {
                 TypeShape t = contentShow.GetChild(i).GetComponent<ItemShowMainHome>().typeShape;
-                Debug.Log(t._name);
+                //Debug.Log(t._name);
                 shapeList.Add(t);
             }
             DataGame.SaveData(shapeList);
             //return;
+            PlayerPrefs.SetInt("NumberCheck", 0);
             SceneManager.LoadScene(ValueConst.NAME_SCENE_PLAY);
+        });
+
+        btnUseLocal.onClick.AddListener(() =>
+        {
+            bool value = PlayerPrefs.GetInt("useLocalOptimal", 0) == 0;
+            value = !value;
+            PlayerPrefs.SetInt("useLocalOptimal", value ? 0 : 1);
+            btnUseLocal.image.color = value ? Color.green : Color.red;
         });
     }
 

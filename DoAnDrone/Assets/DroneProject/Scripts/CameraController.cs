@@ -1,19 +1,14 @@
 ﻿using UnityEngine;
-
-public enum TYPE_CAMERA
-{
-    PERSON,
-    DEFAULT,
-    DRONE
-}
 public class CameraController : MonoBehaviour
 {
     public float zoomSpeed = 5f; // Tốc độ phóng to/thu nhỏ
     public float rotationSpeed = 100f; // Tốc độ xoay
+    public float moveSpeed = 5f; // Tốc độ di chuyển
     public float minZoom = 10f; // Zoom tối thiểu
     public float maxZoom = 100f; // Zoom tối đa
 
     private Camera cam;
+
     void Start()
     {
         cam = Camera.main;
@@ -36,6 +31,15 @@ public class CameraController : MonoBehaviour
             float rotationY = Input.GetAxis("Mouse Y") * rotationSpeed * Time.deltaTime;
 
             cam.transform.Rotate(-rotationY, rotationX, 0);
+        }
+
+        // Xử lý di chuyển camera
+        if (Input.GetMouseButton(1)) // Nếu giữ nút chuột phải
+        {
+            float moveX = Input.GetAxis("Mouse X") * moveSpeed * Time.deltaTime;
+            float moveY = Input.GetAxis("Mouse Y") * moveSpeed * Time.deltaTime;
+
+            cam.transform.position += new Vector3(moveX, moveY, 0);
         }
     }
 }

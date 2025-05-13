@@ -12,6 +12,7 @@ public enum STATE_DRONE
     COMPLED,
     ERRO
 }
+[System.Serializable]
 public class InforDrone
 {
     public int id = -1;
@@ -42,7 +43,10 @@ public class Drone : MonoBehaviour
     private const float tangentKick = 100f;
     private const float timeKickOff = 1f;
     float _timeKickOff = 0;
+    float timeReset;
     Color colorShow;
+
+    bool useLocalOptimal = false;
 
     private void Awake()
     {
@@ -57,7 +61,8 @@ public class Drone : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(inforDrone.id == -1) return;
+        if(inforDrone.id == -1 || transTarget == null) return;
+        if(timeReset > 0) timeReset -= Time.deltaTime;
         if (DroneManager.instance.indexFrame == 0)
         {
             Vector3 dir = transTarget.positions[DroneManager.instance.indexFrame] - transform.position;
@@ -67,11 +72,11 @@ public class Drone : MonoBehaviour
             Vector3 dirDroneCheck = DroneManager.instance.DirSupervisoryDrone(inforDrone.id);
             inforDrone.huong = dir.normalized * DroneManager.instance.moveTargetImportance + dirDroneCheck;
 
-            if (_timeKickOff > 0)
+            if (_timeKickOff > 0 && !useLocalOptimal)
             {
-                inforDrone.huong += new Vector3(0, 0, tangentKick);
+                //inforDrone.huong += new Vector3(0, 0, tangentKick);
                 _timeKickOff -= Time.deltaTime;
-                if(_timeKickOff <= 0)
+                if (_timeKickOff <= 0)
                 {
                     inforDrone.state = STATE_DRONE.FOLLOW;
                 }
@@ -93,14 +98,15 @@ public class Drone : MonoBehaviour
             DroneManager.instance.ShowDrone(inforDrone.id);
         }
     }
-    public void SetValue(int id)
+    public void SetValue(int id, bool isLocal)
     {
-        rb.useGravity = true;
+        useLocalOptimal = isLocal;
         inforDrone = new InforDrone(id); 
         light.gameObject.SetActive(true);
     }
     public void SetTask(Data data)
     {
+        timeReset = 1;
         rb.useGravity = true;
         transTarget = data;
         inforDrone.state = STATE_DRONE.FOLLOW;
@@ -122,7 +128,7 @@ public class Drone : MonoBehaviour
         if (collision.transform.CompareTag("Drone"))
         {
             // only consider collisions with other drones when following
-            if (_timeKickOff > 0f || inforDrone.state != STATE_DRONE.FOLLOW || collision.transform.GetComponent<Drone>().inforDrone.state == STATE_DRONE.ERRO) return;
+            if (timeReset > 0f || (_timeKickOff > 0 && !useLocalOptimal) || inforDrone.state != STATE_DRONE.FOLLOW || collision.transform.GetComponent<Drone>().inforDrone.state == STATE_DRONE.ERRO) return;
 
             Vector3 attractDir = inforDrone.huong.normalized;                           // intended flight
             Vector3 repelDir = (transform.position - collision.transform.position)
@@ -133,6 +139,8 @@ public class Drone : MonoBehaviour
             {
                 _timeKickOff = timeKickOff;
                 inforDrone.state = STATE_DRONE.ERRO;
+                if(useLocalOptimal)
+                    DroneManager.instance.RequestLocalReassignment(this);
             }
         }
     }

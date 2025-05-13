@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Unity.VisualScripting.Antlr3.Runtime;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class DroneManager : MonoBehaviour
 {
@@ -13,6 +15,8 @@ public class DroneManager : MonoBehaviour
     public float conflictDistanceImportance;
     public float distanceCheckDrone;
     public float distanceMoveTarget;
+    public float localReassignRadius = 5f; // giống ρo trong bài báo
+    public bool useLocalOptimal;
 
     [HideInInspector]
     public List<Transform> drones = new List<Transform>();
@@ -45,7 +49,7 @@ public class DroneManager : MonoBehaviour
         for(int i=0; i<DataGame.datas.Count; i++)
             datas.Insert(datas.Count - 1, DataGame.datas[i]);
         //return;   
-
+        useLocalOptimal = PlayerPrefs.GetInt("useLocalOptimal", 0) == 0;
         StartCoroutine(SetUp(6));
     }
     public Vector3 DirSupervisoryDrone(int i)
@@ -102,7 +106,7 @@ public class DroneManager : MonoBehaviour
             {
                 if (indexTask < datas.Count - 1)
                 {
-                    StartCoroutine(SetUpHungarian(5));
+                    StartCoroutine(SetUpHungarian(2));
                 }
                 else
                 {
@@ -123,10 +127,12 @@ public class DroneManager : MonoBehaviour
         {
             drones.Add(transform.GetChild(i));
             droneList.Add(transform.GetChild(i).GetComponent<Drone>());
-            droneList[i].SetValue(i);
+            droneList[i].SetValue(i, useLocalOptimal);
         }
         StartCoroutine(SetUpHungarian(0));
+# if UNITY_EDITOR
         StartCoroutine(CheckProfiler(0.5f));
+#endif
     }
     IEnumerator SetUpHungarian(float delay)
     {
@@ -135,53 +141,89 @@ public class DroneManager : MonoBehaviour
         indexFrame = 0;
         Hungarian.SetUpHungarian(datas[indexTask], ref drones);
     }
+    public bool RequestLocalReassignment(Drone triggerDrone)
+    {
+        // B1: Tìm các drone xung quanh triggerDrone trong bán kính ρo
+        List<Transform> nearbyDrones = drones.Where(d =>
+            d != null &&
+            Vector3.Distance(d.position, triggerDrone.transform.position) < localReassignRadius
+        ).ToList();
+
+        // B2: Lấy danh sách mục tiêu đang gán cho các drone này
+        List<Data> subTargets = new List<Data>();
+        foreach (var d in nearbyDrones)
+        {
+            var drone = d.GetComponent<Drone>();
+            if (drone.transTarget != null)
+                subTargets.Add(drone.transTarget);
+        }
+        if (subTargets.Count < 2) return false;
+        Debug.Log(subTargets.Count);
+        // B3: Áp dụng lại Hungarian nhưng chỉ cho nhóm nhỏ
+        Hungarian.SetUpHungarian(subTargets, ref nearbyDrones);
+        return true;
+    }
+
     public IEnumerator CheckProfiler(float timeDelay)
     {
-        // Khoảng thời gian giữa 2 sample
+        int n = PlayerPrefs.GetInt("NumberCheck", 0);
         WaitForSeconds wait = new WaitForSeconds(timeDelay);
 
-        // Mảng chứa danh sách vị trí của tất cả drone ở mỗi mẫu
-        List<List<Vector3>> samples = new List<List<Vector3>>();
+        // Lưu vị trí và trạng thái
+        var posSamples = new List<List<Vector3>>();
+        var stateSamples = new List<List<STATE_DRONE>>();
 
-        // Lặp cho đến khi isEnd = true
+        // Thu thập mẫu cho đến khi isEnd = true
         while (!isEnd)
         {
-            List<Vector3> snapshot = new List<Vector3>(drones.Count);
-            for (int i = 0; i < drones.Count; i++)
-            {
-                snapshot.Add(drones[i].position);
-            }
-            samples.Add(snapshot);
-
+            posSamples.Add(drones.Select(d => d.position).ToList());
+            stateSamples.Add(drones.Select(d => d.GetComponent<Drone>().inforDrone.state).ToList());
             yield return wait;
         }
 
-        // Build CSV
+        int M = posSamples.Count;
+        int N = drones.Count;
         var sb = new StringBuilder();
 
-        // Header: Time, d0_x,d0_y,d0_z, d1_x,d1_y,d1_z, ...
+        // Header: time, then for each drone: x,y,z,state
         sb.Append("time");
-        for (int i = 0; i < drones.Count; i++)
-            sb.AppendFormat(",d{0}_x,d{0}_y,d{0}_z", i);
+        for (int i = 0; i < N; i++)
+            sb.Append($",d{i}_x,d{i}_y,d{i}_z,d{i}_state");
         sb.AppendLine();
 
         // Rows
-        for (int s = 0; s < samples.Count; s++)
+        for (int s = 0; s < M; s++)
         {
             float t = s * timeDelay;
-            sb.Append(t.ToString("F3"));    // thời gian tính từ start
-            var snap = samples[s];
-            for (int i = 0; i < snap.Count; i++)
+            sb.Append(t.ToString("F3"));
+
+            var posSnap = posSamples[s];
+            var stateSnap = stateSamples[s];
+
+            // Ghi x,y,z,state cho mỗi drone
+            for (int i = 0; i < N; i++)
             {
-                var v = snap[i];
-                sb.AppendFormat(",{0:F4},{1:F4},{2:F4}", v.x, v.y, v.z);
+                var p = posSnap[i];
+                var st = stateSnap[i];
+                sb.Append($",{p.x:F4},{p.y:F4},{p.z:F4},{st}");
             }
+
             sb.AppendLine();
         }
 
-        // Ghi file
-        string path = Path.Combine(Application.dataPath + "/Resources/", "drone_profiler.csv");
+        // Ghi file CSV
+        string path = Path.Combine(Application.dataPath, "Resources", "drone_profiler_coords_states" + (useLocalOptimal ? "local" : "") + n.ToString() + ".csv");
         File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
-        Debug.Log($"[Profiler] Exported {samples.Count} samples to: {path}");
+        Debug.Log($"[Profiler] Exported {M} samples of coords+state to: {path}");
+
+        PlayerPrefs.SetInt("NumberCheck", PlayerPrefs.GetInt("NumberCheck", 0) + 1);
+        if(PlayerPrefs.GetInt("NumberCheck", 0) == 5)
+        {
+            PlayerPrefs.SetInt("NumberCheck", 0);
+            PlayerPrefs.SetInt("useLocalOptimal", PlayerPrefs.GetInt("useLocalOptimal", 0) == 1 ? 0 : 1);
+        }
+        SceneManager.LoadScene(ValueConst.NAME_SCENE_PLAY);
     }
+
+
 }

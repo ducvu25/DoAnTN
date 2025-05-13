@@ -1367,11 +1367,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4998643645968223525, guid: 75e9cbee2c096904aa8d3d0309468c0c, type: 3}
   m_PrefabInstance: {fileID: 307515502}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &323671771 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8974699177906110430, guid: 25b8cd5bd128d1b468428bef4afc1aa9, type: 3}
-  m_PrefabInstance: {fileID: 7480316712703761653}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &338360265 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6103298192324479078, guid: 1050c12d5e1a6da48b2322ed3a597d56, type: 3}
@@ -2734,11 +2729,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 4998643645968223525, guid: 75e9cbee2c096904aa8d3d0309468c0c, type: 3}
   m_PrefabInstance: {fileID: 590644269}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &608502091 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6398034314920381843, guid: 4ff67a2f827c4a444b0950e44cb25f93, type: 3}
-  m_PrefabInstance: {fileID: 805342585}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &618414699
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3868,6 +3858,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4ff67a2f827c4a444b0950e44cb25f93, type: 3}
+--- !u!1 &805342586 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 6398034314920381843, guid: 4ff67a2f827c4a444b0950e44cb25f93, type: 3}
+  m_PrefabInstance: {fileID: 805342585}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &838548717
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6767,11 +6762,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: c92f6dad3c768c244ac38e1040488cd3, type: 3}
   m_PrefabInstance: {fileID: 1295029825}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1298843371 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 1123723778077463592, guid: babc0c4014090424f983e7e2aab74167, type: 3}
-  m_PrefabInstance: {fileID: 5235238441928578763}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1322345948
 GameObject:
   m_ObjectHideFlags: 0
@@ -6807,13 +6797,15 @@ MonoBehaviour:
   conflictDistanceImportance: 20
   distanceCheckDrone: 2
   distanceMoveTarget: 10
+  localReassignRadius: 2.5
+  useLocalOptimal: 0
   drones: []
   droneList: []
   shapeList:
-  - {fileID: 1298843371}
-  - {fileID: 608502091}
-  - {fileID: 323671771}
-  - {fileID: 1298843371}
+  - {fileID: 5235238441928578765}
+  - {fileID: 805342586}
+  - {fileID: 7480316712703761655}
+  - {fileID: 5235238441928578765}
   indexTask: 0
   uiController: {fileID: 56530005}
   indexFrame: 0
@@ -6931,6 +6923,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   zoomSpeed: 5
   rotationSpeed: 100
+  moveSpeed: 20
   minZoom: 10
   maxZoom: 100
 --- !u!1001 &1342232345
@@ -11080,6 +11073,11 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 7062263531566467224, guid: babc0c4014090424f983e7e2aab74167, type: 3}
   m_PrefabInstance: {fileID: 5235238441928578763}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &5235238441928578765 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1123723778077463592, guid: babc0c4014090424f983e7e2aab74167, type: 3}
+  m_PrefabInstance: {fileID: 5235238441928578763}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &6589467425851581961
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -11221,6 +11219,11 @@ PrefabInstance:
 --- !u!4 &7480316712703761654 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8114603532994786917, guid: 25b8cd5bd128d1b468428bef4afc1aa9, type: 3}
+  m_PrefabInstance: {fileID: 7480316712703761653}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &7480316712703761655 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8974699177906110430, guid: 25b8cd5bd128d1b468428bef4afc1aa9, type: 3}
   m_PrefabInstance: {fileID: 7480316712703761653}
   m_PrefabAsset: {fileID: 0}
 --- !u!4 &8954493032835616969 stripped
