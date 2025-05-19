@@ -1,3 +1,34 @@
-https://github.com/videh25/Path-Planning-Algorithms
-https://www.youtube.com/watch?v=wIy67gc7aHU
-https://www.youtube.com/watch?v=BbALeWsde3Y&t=769s
+❓Câu 1: Vì sao em chọn Unity thay vì Gazebo hay Webots?
+Dạ, em chọn Unity vì đây là một nền tảng mạnh về đồ họa 3D và tương thích tốt với C# – ngôn ngữ lập trình em sử dụng để tích hợp các thuật toán.
+So với Gazebo hay Webots thiên về mô phỏng vật lý robot, Unity giúp em:
+Thiết kế giao diện ADI trực quan dễ dùng hơn,
+Dễ dàng thêm hiệu ứng ánh sáng – màu sắc – chuyển động mượt,
+Đồng thời em có thể dễ dàng xuất bản mô phỏng này lên web.
+Do mục tiêu chính là trình diễn ánh sáng và kiểm tra thuật toán phân nhiệm + chuyển động đồng bộ, Unity là lựa chọn phù hợp hơn với đề tài.
+
+❓Câu 2: Nếu drone thật không có GNSS RTK thì sao? Có thể mô phỏng không?
+Dạ, nếu drone không có GNSS RTK thì độ chính xác vị trí sẽ giảm xuống còn khoảng vài mét, dẫn đến việc trình diễn sẽ dễ bị lệch đội hình, va chạm.
+Tuy nhiên trong mô phỏng, em giả lập GNSS RTK bằng cách đưa vào tọa độ chính xác nên vẫn có thể đánh giá thuật toán tốt.
+Nếu triển khai thật, có thể thay thế GNSS RTK bằng các công nghệ định vị tương đối như Ultra Wide Band (UWB) hoặc Visual SLAM trong phạm vi nhỏ.
+Em cũng đề xuất trong hướng phát triển là mô phỏng sai số vị trí, để đánh giá độ ổn định thuật toán.
+
+❓Câu 3: Nếu tăng số drone lên 500 thì hiệu năng hệ thống có đảm bảo?
+Dạ, về mặt lý thuyết, hệ thống vẫn chạy được, tuy nhiên cần tối ưu một số điểm:
+
+Thuật toán Hungarian có độ phức tạp 𝑂(𝑛^3),  nên với 500 drone cần áp dụng thuật toán xấp xỉ (đưa ra các phương án gần tối ưu) hoặc chia vùng để xử lý song song.
+Unity có thể mô phỏng hàng trăm object, nhưng cần giảm số frame hoặc tối ưu rendering để tránh lag.
+MEC sẽ giúp giảm số lần phân nhiệm, giảm tải tính toán tại GCS.
+
+❓Câu 4: MEC em triển khai có tương đương thuật toán Block Matching trong video không?
+Dạ, về nguyên lý thì tương tự:
+Cả hai đều dùng ý tưởng từ Motion Estimation để dự đoán vị trí tiếp theo từ frame hiện tại.
+MEC em áp dụng là phiên bản đơn giản hơn: không tìm khối tương đồng mà lấy vector dịch chuyển trung bình giữa drone hiện tại và mục tiêu mới.
+Điều này giúp giữ được hướng bay liên tục, giảm chấn động hoặc đột ngột khi chuyển đội hình, mà không cần phân nhiệm lại bằng Hungarian mỗi frame.
+
+❓Câu 5: Em có đề xuất gì để đưa hệ thống từ mô phỏng sang thực tế?
+Dạ, nếu triển khai thực tế, em đề xuất:
+Tối ưu lại mô phỏng cho phần cứng thật, dùng drone mini như Tello để kiểm tra trước.
+Tích hợp hệ thống định vị nội bộ, ví dụ UWB nếu không dùng được GNSS.
+Giao tiếp với drone thật bằng MAVSDK thay cho Unity giả lập.
+Phát triển thêm mô-đun kiểm soát năng lượng, tránh hết pin giữa chừng.
+Cuối cùng là đưa giao diện ADI ra thành ứng dụng web thực tế để người dùng không kỹ thuật cũng có thể tạo kịch bản trình diễn.
